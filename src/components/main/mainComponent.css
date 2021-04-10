@@ -1,6 +1,7 @@
 #username {
     font-weight: bold;
     color: white;
+    font-size: large;
 }
 
 #title{
@@ -9,6 +10,7 @@
 
 #basic-nav-dropdown {
     color: white;
+    font-weight: bolder;
 }
 
 #notsubmessage {

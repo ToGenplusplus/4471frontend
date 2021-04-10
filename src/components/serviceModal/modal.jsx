@@ -11,19 +11,18 @@ class ServiceModal extends Component {
     render() { 
 
         const {title,body,onSubscribe,onClose,isShowing} = this.props;
-
-        let name = {title};
         return ( 
-            <Modal show={isShowing} onHide={onClose(name.title)}>
+            <Modal show={isShowing} onHide={onClose(title)} backdrop="static"
+            keyboard={false}>
                 <Modal.Header closeButton>
                 <Modal.Title>{title}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>{body}</Modal.Body>
                 <Modal.Footer>
-                <Button variant="secondary" onClick={onClose(name)}>
+                <Button variant="secondary" onClick={onClose(title)}>
                     Close
                 </Button>
-                <Button variant="primary" onClick={onSubscribe} style={{color:"purple"}}>
+                <Button variant="primary" onClick={onSubscribe} style={{backgroundColor:"purple"}}>
                     Subscribe
                 </Button>
                 </Modal.Footer>

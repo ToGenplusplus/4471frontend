@@ -16,7 +16,8 @@ class Home extends Component {
     }
 
     handleError = (e) => {
-        this.setState({errormessage: e})
+        const reload = `${e} reload page!`;
+        this.setState({errormessage: reload})
     }
 
     setCurrentUser = (info) => {

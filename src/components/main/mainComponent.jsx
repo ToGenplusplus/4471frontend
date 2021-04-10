@@ -12,7 +12,7 @@ class Main extends Component {
         super(props);
         this.wrapper = React.createRef();  }
     state = { services: [], subscribedServices:[], showSectorServiceModal:false,showSusServiceModal:false,showTrafficServiceModal:false}
-
+    
     componentDidMount (){
         this.setSubScribedServices();
     }
@@ -34,18 +34,30 @@ class Main extends Component {
     setSubScribedServices = () => {
         const {userinfo} = this.props;
         this.setState({subscribedServices: userinfo[3]})
-    }
+    };
 
-    toggleServiceModal = (servicename)=> {
-        const {showSectorServiceModal, showSusServiceModal, showTrafficServiceModal} = this.state;
-        if (servicename.service === "Sector-Watch"){
-            this.setState({showSectorServiceModal: !showSectorServiceModal});
-        }else if (servicename.service === "Traffic-Tracker"){
-            this.setState({showTrafficServiceModal: !showTrafficServiceModal});
-        }else{
-            this.setState({showSusServiceModal: !showSusServiceModal});
-        }
-    }
+    toggleSectorModal = ()=> {
+        const {showSectorServiceModal} = this.state;
+        
+        this.setState({showSectorServiceModal: !showSectorServiceModal});
+    
+    };
+
+    toggleSusModal = ()=> {
+        const {showSusServiceModal} = this.state;
+        
+        this.setState({showSusServiceModal: !showSusServiceModal});
+    };
+    
+    toggleTrafficModal = ()=> {
+        const {showTrafficServiceModal} = this.state;
+        
+        this.setState({showTrafficServiceModal: !showTrafficServiceModal});
+    };
+
+    onLogoutClick = () => {
+        window.location.reload();
+    };
 
     navbar = () => {
         const navbarstyle = {
@@ -55,9 +67,17 @@ class Main extends Component {
         const {services} = this.state;
         this.getAvailableServices();
     
-        const avaServices = services.map((service) => <NavDropdown.Item onClick={() => this.toggleServiceModal({service})} ref={this.wrapper}>{service}</NavDropdown.Item>)
-        
+        const sectorWatch = 'Sector-Watch';
+        const suspicious = 'Suspicious-Trades-Tracker';
+        const traffic = 'Traffic-Tracker';
 
+        const isSecAvailable = services.includes(sectorWatch);
+        const isSusAvailable = services.includes(suspicious);
+        const isTrafficAvailable = services.includes(traffic);
+        
+        const dropItemOne = isSecAvailable ? <NavDropdown.Item onClick={() => this.toggleSectorModal()} ref={this.wrapper}>{sectorWatch}</NavDropdown.Item> : '';
+        const dropItemTwo = isSusAvailable ? <NavDropdown.Item onClick={() => this.toggleSusModal()} ref={this.wrapper}>{suspicious}</NavDropdown.Item> : '';
+        const dropItemThree = isTrafficAvailable ? <NavDropdown.Item onClick={() => this.toggleTrafficModal()} ref={this.wrapper}>{traffic}</NavDropdown.Item> : '';
     
         return (
             <Navbar expand="lg" style={navbarstyle}>
@@ -66,37 +86,39 @@ class Main extends Component {
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="mr-auto">
                     <NavDropdown title="Services" id="basic-nav-dropdown" className="navbaritems">
-                        {avaServices}
+                        {dropItemOne}
+                        {dropItemTwo}
+                        {dropItemThree}
                     </NavDropdown>
                     </Nav>
                     <Nav>
                         <Nav.Link href="#link" id="username" className="navbaritems" disabled>{userinfo[2]}</Nav.Link>
-                        <Nav.Link href="#link" >Logout</Nav.Link>
+                        <Nav.Link onClick={() => this.onLogoutClick()} ref={this.wrapper} >Logout</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>
         );
     };
-/*
-<ServiceModal title="Sector-Watch" body={sectorDescription} onClose={this.toggleServiceModal} isShowing={showSectorServiceModal} />
-                <ServiceModal title="Suspicious-Trades Tracker" body={suspiciousDescription} onClose={this.toggleServiceModal} isShowing={showSusServiceModal} />
-                <ServiceModal title="Traffic Tracker" body={trafficDescription} onClose={this.toggleServiceModal} isShowing={showTrafficServiceModal} />
-*/
+
     render() { 
         const {subscribedServices, showSectorServiceModal, showSusServiceModal, showTrafficServiceModal} = this.state;
-        const sectorDescription = "Service allows you to view sector performance for select dates in 2011"
-        const suspiciousDescription = "Service allows you to view the symbols of companies who made suspicious trades on a certain date"
-        const trafficDescription = "Service allows you to view active companies on a certain date"
-        const message = subscribedServices.length === 0 ? <div id="notsubmessage"><h3>You are not subscribed to any services.<br></br> View the services menu for available services to subscribe too</h3></div>:'';
+        const sectorDescription = "Service allows you to view sector performance for select dates in 2011."
+        const suspiciousDescription = "Service allows you to view the symbols of companies who made suspicious trades on select dates in 2011."
+        const trafficDescription = "Service allows you to view active companies on select dates in 2011."
+        const message = subscribedServices.length === 0 ? <div id="notsubmessage"><h3>You are not subscribed to any services.<br></br> View the services menu for available services to subscribe to!</h3></div>:'';
 
-        const showingModal = showSectorServiceModal ? <ServiceModal title="Sector-Watch" body={sectorDescription} onClose={this.toggleServiceModal} isShowing={showSectorServiceModal} /> : ''
+        const modal1 = showSectorServiceModal ? <ServiceModal title="Sector-Watch" body={sectorDescription} onClose={() => this.toggleSectorModal} isShowing={showSectorServiceModal} ref={this.wrapper}/> : '';
+        const modal2 = showSusServiceModal ? <ServiceModal title="Suspicious-Trades-Tracker" body={suspiciousDescription} onClose={() => this.toggleSusModal} isShowing={showSusServiceModal} ref={this.wrapper}/>: '';
+        const modal3 = showTrafficServiceModal ? <ServiceModal title="Traffic-Tracker" body={trafficDescription} onClose={() => this.toggleTrafficModal} isShowing={showTrafficServiceModal} ref={this.wrapper}/> : '';
         return (  
             <div id="mainPage">
                 <div>
                 {this.navbar()}
                 </div>
                 {message}
-                {showingModal}
+                {modal1}
+                {modal2}
+                {modal3}
             </div>
         );
     }
