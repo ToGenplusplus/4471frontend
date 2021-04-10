@@ -3,18 +3,28 @@ import applogo from '../../applogo.png'
 import axios from 'axios';
 import AppID from 'ibmcloud-appid-js';
 import AppButton from '../button/buttonComponent'
+import Main from '../main/mainComponent';
 import './homeComponent.css'
+
 
 class Home extends Component {
 
     constructor() {
         super();
-        this.state = { isAdmin: false, errormessage:''};
+        this.state = { userinfo:[], isAdmin: false, errormessage:'', isDisplaying: true};
         this.onLoginButtonClick = this.onLoginButtonClick.bind(this);
     }
 
     handleError = (e) => {
         this.setState({errormessage: e})
+    }
+
+    setCurrentUser = (info) => {
+        this.setState({userinfo: info})
+    }
+
+    toggleDisplay = () => {
+        this.setState({isDisplaying: !this.state.isDisplaying});
     }
 
     authenticate = (userinfo) => {
@@ -25,12 +35,17 @@ class Home extends Component {
           const data = res.data
           if (data.statusCode === 200 || data.statusCode === 400){
             let info = JSON.parse(res.data.body); 
+            let userarray;
             if (info.isAdmin){
               let allinfo = Object.assign(info, {access: userinfo.token})
-              //this.currentUserInfo = allinfo;
-              console.log(allinfo)
+              userarray = [allinfo._id,allinfo.isAdmin,allinfo.username,allinfo.services,allinfo.access];
+              this.setCurrentUser(userarray);
+              this.setState({isAdmin: true});
+              this.toggleDisplay();
             }else{
-                console.log(info)
+                userarray = [info._id,info.isAdmin,info.username,info.services];
+                this.setCurrentUser(userarray);
+                this.toggleDisplay();
             }
           }
           })
@@ -49,28 +64,49 @@ class Home extends Component {
             const user_id = userInfo.identities[0].id
 
             const user = {userid:user_id, username:user_name, token:tokens.accessToken}
-            //this.authenticate(user)
+            this.authenticate(user)
           } catch (e) {
             this.handleError(e.message);
           }
     };
 
     render() { 
-        const {errormessage} = this.state;
-        const style = {
+        const {errormessage,isAdmin,userinfo, isDisplaying} = this.state;
+        const buttonstyle = {
             backgroundColor: "purple",
             padding : 10,
             marginTop: 10,
         }
+        const disp = isDisplaying ? "block" : "none";
+        const homedisplay = {
+            display: disp,
+        }
+
+        let displayed;
+        
+            if (errormessage !== ''){
+                
+                    displayed = <div className="error">{errormessage === ''? '': `Error : ${errormessage}`}</div>
+                
+            }else{
+                if (!isAdmin && userinfo.length !== 0){
+                    
+                    displayed = <Main userinfo={userinfo}/>
+                    
+                }
+            }
+        
         return (  
-            <div id="homeDisplaydiv">
-                <div id="homeTitleDisplay">
-                    <img src={applogo} id="applogo" alt="financial service collection"/>
+            <div>
+                <div id="homeDisplaydiv" style={homedisplay}>
+                    <div id="homeTitleDisplay">
+                        <img src={applogo} id="applogo" alt="financial service collection"/>
+                    </div>
+                    <div id="authbutton">
+                    <AppButton name="Register / Login" onClickFunction={this.onLoginButtonClick} style={buttonstyle}/>
+                    </div>
                 </div>
-                <div id="authbutton">
-                <AppButton name="Register / Login" onClickFunction={this.onLoginButtonClick} style={style}/>
-                </div>
-                <div className="error">{errormessage === ''? '': `Error : ${errormessage}`}</div>
+                {displayed}
             </div>
         );
     }
