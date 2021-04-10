@@ -1,35 +1,30 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import 'react-bootstrap/Button';
+import Button from 'react-bootstrap/Button';
+import './buttonComponent.css'
 
 
-class Button extends Component {
+class AppButton extends Component {
     state = {  };
 
     render() { 
-        const {name, onClickFunction,style,specifyVariant} = this.props;
+        const {name, onClickFunction,style} = this.props;
         return (
-            <React.Fragment> 
-                <Button variant={specifyVariant} onClick={onClickFunction} style={style}>{name}</Button>
-            </React.Fragment>
+                <Button onClick={onClickFunction} style={style}>{name}</Button>
             );
     }
 }
  
-Button.defaultProps = {
+AppButton.defaultProps = {
     name: '',
-    onClickFunction: function name(params) {
-        
-    },
+    onClickFunction: '',
     style:{},
-    specifyVariant: "dark"
 }
 
-Button.propTypes = {
+AppButton.propTypes = {
     name: PropTypes.string,
     onClickFunction: PropTypes.func.isRequired,
     style:PropTypes.object,
-    specifyVariant: PropTypes.string
 }
 
-export default Button;
+export default AppButton;
