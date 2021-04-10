@@ -34,7 +34,7 @@ class ServiceModal extends Component {
 ServiceModal.propTypes = {
     title: PropTypes.string.isRequired,
     body: PropTypes.string.isRequired,
-    onSubscribe: PropTypes.func,
+    onSubscribe: PropTypes.func.isRequired,
     onClose: PropTypes.func.isRequired,
     isShowing: PropTypes.bool.isRequired,
 }
