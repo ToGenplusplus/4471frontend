@@ -8,6 +8,9 @@ import './mainComponent.css'
 import ServiceModal from "../serviceModal/modal"
 
 class Main extends Component {
+    constructor(props) {
+        super(props);
+        this.wrapper = React.createRef();  }
     state = { services: [], subscribedServices:[], showSectorServiceModal:false,showSusServiceModal:false,showTrafficServiceModal:false}
 
     componentDidMount (){
@@ -35,9 +38,9 @@ class Main extends Component {
 
     toggleServiceModal = (servicename)=> {
         const {showSectorServiceModal, showSusServiceModal, showTrafficServiceModal} = this.state;
-        if (servicename === "Sector-Watch"){
+        if (servicename.service === "Sector-Watch"){
             this.setState({showSectorServiceModal: !showSectorServiceModal});
-        }else if (servicename === "Traffic-Tracker"){
+        }else if (servicename.service === "Traffic-Tracker"){
             this.setState({showTrafficServiceModal: !showTrafficServiceModal});
         }else{
             this.setState({showSusServiceModal: !showSusServiceModal});
@@ -52,7 +55,7 @@ class Main extends Component {
         const {services} = this.state;
         this.getAvailableServices();
     
-        const avaServices = services.map((service) => <NavDropdown.Item onClick={this.toggleServiceModal({service})}>{service}</NavDropdown.Item>)
+        const avaServices = services.map((service) => <NavDropdown.Item onClick={() => this.toggleServiceModal({service})} ref={this.wrapper}>{service}</NavDropdown.Item>)
         
 
     
@@ -85,12 +88,15 @@ class Main extends Component {
         const suspiciousDescription = "Service allows you to view the symbols of companies who made suspicious trades on a certain date"
         const trafficDescription = "Service allows you to view active companies on a certain date"
         const message = subscribedServices.length === 0 ? <div id="notsubmessage"><h3>You are not subscribed to any services.<br></br> View the services menu for available services to subscribe too</h3></div>:'';
+
+        const showingModal = showSectorServiceModal ? <ServiceModal title="Sector-Watch" body={sectorDescription} onClose={this.toggleServiceModal} isShowing={showSectorServiceModal} /> : ''
         return (  
             <div id="mainPage">
                 <div>
                 {this.navbar()}
                 </div>
                 {message}
+                {showingModal}
             </div>
         );
     }
