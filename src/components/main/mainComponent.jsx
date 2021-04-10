@@ -5,10 +5,14 @@ import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import './mainComponent.css'
+import ServiceModal from "../serviceModal/modal"
 
 class Main extends Component {
-    state = { services: [], subscribedServices:[]}
+    state = { services: [], subscribedServices:[], showSectorServiceModal:false,showSusServiceModal:false,showTrafficServiceModal:false}
 
+    componentDidMount (){
+        this.setSubScribedServices();
+    }
 
     getAvailableServices = () => {
         const servicespath = "https://425ee274.us-south.apigw.appdomain.cloud/service/"
@@ -24,42 +28,70 @@ class Main extends Component {
           .catch(e => console.log(e));
       };
 
+    setSubScribedServices = () => {
+        const {userinfo} = this.props;
+        this.setState({subscribedServices: userinfo[3]})
+    }
+
+    toggleServiceModal = (servicename)=> {
+        const {showSectorServiceModal, showSusServiceModal, showTrafficServiceModal} = this.state;
+        if (servicename === "Sector-Watch"){
+            this.setState({showSectorServiceModal: !showSectorServiceModal});
+        }else if (servicename === "Traffic-Tracker"){
+            this.setState({showTrafficServiceModal: !showTrafficServiceModal});
+        }else{
+            this.setState({showSusServiceModal: !showSusServiceModal});
+        }
+    }
+
     navbar = () => {
         const navbarstyle = {
             backgroundColor: "purple",
         }
-
-        //services user subscribed 2 = userinfo[3]
         const {userinfo} = this.props;
         const {services} = this.state;
         this.getAvailableServices();
     
-        const avaServices = services.map((service) => <NavDropdown.Item onClick="">{service}</NavDropdown.Item>)
+        const avaServices = services.map((service) => <NavDropdown.Item onClick={this.toggleServiceModal({service})}>{service}</NavDropdown.Item>)
         
 
     
         return (
             <Navbar expand="lg" style={navbarstyle}>
-                <Navbar.Brand> $Financial Service Collection </Navbar.Brand>
+                <Navbar.Brand id="title"> $Financial Service Collection </Navbar.Brand>
                 <Navbar.Toggle aria-controls="basic-navbar-nav" />
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="mr-auto">
-                    <NavDropdown title="Services" id="basic-nav-dropdown">
+                    <NavDropdown title="Services" id="basic-nav-dropdown" className="navbaritems">
                         {avaServices}
                     </NavDropdown>
                     </Nav>
                     <Nav>
-                        <Nav.Link href="#link" disabled>{userinfo[2]}</Nav.Link>
+                        <Nav.Link href="#link" id="username" className="navbaritems" disabled>{userinfo[2]}</Nav.Link>
                         <Nav.Link href="#link" >Logout</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>
         );
     };
-
+/*
+<ServiceModal title="Sector-Watch" body={sectorDescription} onClose={this.toggleServiceModal} isShowing={showSectorServiceModal} />
+                <ServiceModal title="Suspicious-Trades Tracker" body={suspiciousDescription} onClose={this.toggleServiceModal} isShowing={showSusServiceModal} />
+                <ServiceModal title="Traffic Tracker" body={trafficDescription} onClose={this.toggleServiceModal} isShowing={showTrafficServiceModal} />
+*/
     render() { 
+        const {subscribedServices, showSectorServiceModal, showSusServiceModal, showTrafficServiceModal} = this.state;
+        const sectorDescription = "Service allows you to view sector performance for select dates in 2011"
+        const suspiciousDescription = "Service allows you to view the symbols of companies who made suspicious trades on a certain date"
+        const trafficDescription = "Service allows you to view active companies on a certain date"
+        const message = subscribedServices.length === 0 ? <div id="notsubmessage"><h3>You are not subscribed to any services.<br></br> View the services menu for available services to subscribe too</h3></div>:'';
         return (  
-            this.navbar()
+            <div id="mainPage">
+                <div>
+                {this.navbar()}
+                </div>
+                {message}
+            </div>
         );
     }
 }

@@ -11,7 +11,7 @@ class Home extends Component {
 
     constructor() {
         super();
-        this.state = { userinfo:[], isAdmin: false, errormessage:'', isDisplaying: true};
+        this.state = { userinfo:[], isAdmin: false, errormessage:'', isDisplaying: true, loginClicked:false};
         this.onLoginButtonClick = this.onLoginButtonClick.bind(this);
     }
 
@@ -25,6 +25,10 @@ class Home extends Component {
 
     toggleDisplay = () => {
         this.setState({isDisplaying: !this.state.isDisplaying});
+    }
+    
+    toggleButtonClick = () => {
+        this.setState({loginClicked: !this.state.loginClicked})
     }
 
     authenticate = (userinfo) => {
@@ -54,6 +58,7 @@ class Home extends Component {
 
     async onLoginButtonClick (){
         try {
+            this.toggleButtonClick();
             const appID = new AppID();
             await appID.init({clientId: "16c9bb34-cb09-473c-9aae-2e903bd596cc", discoveryEndpoint: "https://us-south.appid.cloud.ibm.com/oauth/v4/6facaa33-0f16-45b0-8554-5cba3aa02b8e/.well-known/openid-configuration"});
             const tokens = await appID.signin();
@@ -71,7 +76,7 @@ class Home extends Component {
     };
 
     render() { 
-        const {errormessage,isAdmin,userinfo, isDisplaying} = this.state;
+        const {errormessage,isAdmin,userinfo, isDisplaying,loginClicked} = this.state;
         const buttonstyle = {
             backgroundColor: "purple",
             padding : 10,
@@ -89,11 +94,14 @@ class Home extends Component {
                     displayed = <div className="error">{errormessage === ''? '': `Error : ${errormessage}`}</div>
                 
             }else{
-                if (!isAdmin && userinfo.length !== 0){
+                if (!isAdmin) {
+                    if(userinfo.length !== 0 && loginClicked){
+                        displayed = <Main userinfo={userinfo}/>
+                    }else if(userinfo.length === 0 && loginClicked){
+                        displayed = <div className="error">Entering platform, please wait ... </div>
+                    }
+                } 
                     
-                    displayed = <Main userinfo={userinfo}/>
-                    
-                }
             }
         
         return (  
