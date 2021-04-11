@@ -8,15 +8,25 @@ import './mainComponent.css'
 import ServiceModal from '../serviceModal/modal';
 import Service from '../serviceArea/serivce';
 
+let source;
+
 class Main extends Component {
     constructor(props) {
         super(props);
-        this.wrapper = React.createRef();  }
+        this.wrapper = React.createRef();  
+        source = axios.CancelToken.source();
+    }
     state = { services: [], subscribedServices:[], showSectorServiceModal:false,showSusServiceModal:false,showTrafficServiceModal:false, appMesage:''}
     
     componentDidMount (){
         this.setSubScribedServices();
         this.getAvailableServices();
+    }
+
+    componentWillUnmount(){
+        if (source) {
+            source.cancel("Main Component got unmounted");
+        }
     }
 
     componentDidUpdate(prevProps,prevState){
@@ -32,7 +42,9 @@ class Main extends Component {
     getAvailableServices = () => {
         const servicespath = "https://425ee274.us-south.apigw.appdomain.cloud/service/"
         const aservicespath = servicespath + "getservices"
-          axios.get(aservicespath)
+          axios.get(aservicespath, {
+            cancelToken: source.token
+          })
           .then((res) => {
           const data = res.data
           if (data.statusCode === 200){
@@ -154,7 +166,6 @@ class Main extends Component {
         } 
 
         const displayMessage = (message === '') ? servicesUnavailable: message
-        console.log('called');
         this.setState({appMesage: displayMessage});
     }
 
@@ -194,7 +205,7 @@ class Main extends Component {
                     </Nav>
                     <Nav>
                         <Nav.Link  id="username" className="navbaritems" disabled>{userinfo[2]}</Nav.Link>
-                        <Nav.Link onClick={() => this.onLogoutClick()} ref={this.wrapper} >Logout</Nav.Link>
+                        <Nav.Link onClick={() => this.onLogoutClick()} ref={this.wrapper} style={{fontSize:"large"}}>Logout</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
             </Navbar>
@@ -206,7 +217,6 @@ class Main extends Component {
         const sectorDescription = "Service allows you to view sector performance for select dates in 2011."
         const suspiciousDescription = "Service allows you to view the symbols of companies who made suspicious trades on select dates in 2011."
         const trafficDescription = "Service allows you to view active companies on select dates in 2011."
-        //const message = subscribedServices.length === 0 ? <h3>You are not subscribed to any services.<br></br> View the services menu for available services to subscribe to!</h3>:'';
 
         const modal1 = showSectorServiceModal ? <ServiceModal title="Sector-Watch" body={sectorDescription} CloseModal={this.toggleSectorModal} onSub={this.onSubscribe} isShowing={showSectorServiceModal} ref={this.wrapper}/> : '';
         const modal2 = showSusServiceModal ? <ServiceModal title="Suspicious-Trades-Tracker" body={suspiciousDescription} CloseModal={this.toggleSusModal} onSub={this.onSubscribe} isShowing={showSusServiceModal} ref={this.wrapper}/>: '';
@@ -218,22 +228,7 @@ class Main extends Component {
         const showSectorService = (subscribedServices.includes(sectorWatch) && services.includes(sectorWatch));
         const showSusService = (subscribedServices.includes(suspicious) && services.includes(suspicious));
         const showTrafficService = (subscribedServices.includes(traffic) && services.includes(traffic));
-
-        /*
-        let servicesUnavailable;
-        if (subscribedServices.length > 0){
-            servicesUnavailable = subscribedServices.map((service) => {
-                if (!services.includes(service)){
-                    return <h3 key={service}>Subcribed service: {service} is currrently unavailable.</h3>
-                }
-                return '';
-        })
-        }else{
-            servicesUnavailable = ''
-        } 
-
-        const displayMessage = (message === '') ? servicesUnavailable: message
-        */
+        
         return (  
             <div id="mainPage">
                 <div>

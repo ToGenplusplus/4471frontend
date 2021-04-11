@@ -4,6 +4,7 @@ import axios from 'axios';
 import AppID from 'ibmcloud-appid-js';
 import AppButton from '../button/buttonComponent'
 import Main from '../main/mainComponent';
+import Admin from '../admin/adminComponent';
 import './homeComponent.css'
 
 
@@ -99,6 +100,12 @@ class Home extends Component {
                 if (!isAdmin) {
                     if(userinfo.length !== 0 && loginClicked){
                         displayed = <Main userinfo={userinfo}/>
+                    }else if(userinfo.length === 0 && loginClicked){
+                        displayed = <div className="error">Entering platform, please wait ... </div>
+                    }
+                }else{
+                    if(userinfo.length !== 0 && loginClicked){
+                        displayed = <Admin userinfo={userinfo}/>
                     }else if(userinfo.length === 0 && loginClicked){
                         displayed = <div className="error">Entering platform, please wait ... </div>
                     }

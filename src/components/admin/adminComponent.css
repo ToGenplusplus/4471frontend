@@ -1,0 +1,40 @@
+#adminBody {
+    position: relative;
+    max-width: 100%;
+    max-height: 100%;
+    top: 10%;
+    padding: 10px;
+    margin-top: 5px;
+  }
+
+  #platformServices {
+      position: absolute;
+      max-width: 60%;
+  }
+
+
+  #aServices{
+      position: absolute;
+      max-width: 40%;
+      left: 70%;
+      top: 100px;
+      text-align: center;
+  }
+
+  .sName{
+      font-weight: bolder;
+      display: inline;
+  }
+
+  .sDescr{
+      font-size: medium;
+  }
+
+  .switchLabel{
+      position: absolute;
+      font-size: 18px;
+      font-weight: bolder;
+      display: inline;
+      right: 13%;
+
+  }
