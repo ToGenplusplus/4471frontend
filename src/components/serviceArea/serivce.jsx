@@ -21,6 +21,11 @@ class Service extends Component {
 
     handleClick = (date) => {
         const {title} = this.props;
+        const {dateSelected} = this.state;
+
+        if (!dateSelected){
+            this.setState({dateSelected: !dateSelected});
+        }
 
         const sectorWatch = 'Sector-Watch';
         const suspicious = 'Suspicious-Trades-Tracker';
@@ -45,7 +50,6 @@ class Service extends Component {
           if (data.statusCode === 200){
             let info = JSON.parse(res.data.body); 
             const sectorcontent = this.formatPerformanceData(info.sectors);
-            console.log(sectorcontent);
             this.setState({sectorContent:sectorcontent});
           }
           })
@@ -105,21 +109,6 @@ class Service extends Component {
         "2011-08-29","2011-09-19","2011-09-30","2011-10-20","2011-10-31",
         "2011-11-21","2011-11-25","2011-11-29","2011-12-06","2011-12-07",
         ];
-        const {title} = this.props;
-
-        const sectorWatch = 'Sector-Watch';
-        const suspicious = 'Suspicious-Trades-Tracker';
-
-        let whichClickFunction;
-
-        if (title === sectorWatch){
-            whichClickFunction = () => this.getSectorPerformance;
-        }else if(title === suspicious){
-            whichClickFunction = () => this.getSusCompanies;
-        }else{
-            whichClickFunction = () => this.getTraffic;
-        }
-
 
         const dropdownItems = dates.map((date) => {const reqdate = this.formatDate(date);  return <Dropdown.Item as="button" onClick={() => this.handleClick(reqdate)} key={date} ref={this.wrapper}>{date}</Dropdown.Item>} )
         return(
@@ -130,32 +119,41 @@ class Service extends Component {
             </DropdownButton>
         );
     }
-    render() { 
-        const {title, onUnsubscribe,isShowing} = this.props;
-        const {sectorContent,susContent,trafficContent} = this.state; 
-        
-        const secheads = ["Sector","Close","High","Low","Change","Change PCT"];
+
+    displayTable = (service) => {
+
+        const {sectorContent,susContent,trafficContent,dateSelected} = this.state; 
+
+        const secheads = ["Sector","Close","High","Low","Change","Change %"];
         const susheads = ["Company Ticker"];
         const trafficheads = ["Company"];
 
         const sectorWatch = 'Sector-Watch';
         const suspicious = 'Suspicious-Trades-Tracker';
-        
+        const traffic = 'Traffic-Tracker'
+
         let displayTable;
-        if (title === sectorWatch){
-            displayTable = <ServiceTable headers={secheads} content={sectorContent}/>
-        }else if(title === suspicious){
-            displayTable = <ServiceTable headers={susheads} content={susContent}/>
+        if (service === sectorWatch){
+            displayTable = <ServiceTable headers={secheads} content={sectorContent} isShowing={dateSelected} whichService={sectorWatch}/>
+        }else if(service === suspicious){
+            displayTable = <ServiceTable headers={susheads} content={susContent} isShowing={dateSelected} whichService={suspicious}/>
         }else{
-            displayTable = <ServiceTable headers={trafficheads} content={trafficContent}/>
+            displayTable = <ServiceTable headers={trafficheads} content={trafficContent} isShowing={dateSelected} whichService={traffic}/>
         }
-       // {this.dateDropdown()}
+
+        return displayTable;
+    }
+    render() { 
+        const {title, onUnsubscribe,isShowing} = this.props;
+        
+        const display = this.displayTable(title);
+
         return (
         <div className="servicesDiv" style={{display: isShowing ? "block" : "none"}}>
             <h3>{title}</h3>
             {this.dateDropdown()}
-            {displayTable}
-            <Button variant="primary" onClick={onUnsubscribe} className="unsubscribeButton">
+            {display}
+            <Button variant="primary" onClick={() => onUnsubscribe(title)} className="unsubscribeButton">
                     Unsubscribe
             </Button>
         </div>  
@@ -164,9 +162,9 @@ class Service extends Component {
 }
 
 Service.propTypes = {
-    title: PropTypes.string,
-    isShowing: PropTypes.bool,
-    onUnsubscribe: PropTypes.func,
+    title: PropTypes.string.isRequired,
+    isShowing: PropTypes.bool.isRequired,
+    onUnsubscribe: PropTypes.func.isRequired,
 }
  
 export default Service;

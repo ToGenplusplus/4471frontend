@@ -5,7 +5,8 @@ import Navbar from 'react-bootstrap/Navbar';
 import Nav from 'react-bootstrap/Nav';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import './mainComponent.css'
-import ServiceModal from "../serviceModal/modal"
+import ServiceModal from '../serviceModal/modal';
+import Service from '../serviceArea/serivce';
 
 class Main extends Component {
     constructor(props) {
@@ -52,6 +53,7 @@ class Main extends Component {
         const servicespath = "https://425ee274.us-south.apigw.appdomain.cloud/service/"
         const aservicespath = servicespath + "subscribe";
         const {subscribedServices} = this.state;
+
         if (!subscribedServices.includes(servicename)){
             axios.post(aservicespath, {
                 serviceName: servicename,
@@ -174,7 +176,7 @@ class Main extends Component {
     };
 
     render() { 
-        const {subscribedServices, showSectorServiceModal, showSusServiceModal, showTrafficServiceModal} = this.state;
+        const {services, subscribedServices, showSectorServiceModal, showSusServiceModal, showTrafficServiceModal} = this.state;
         const sectorDescription = "Service allows you to view sector performance for select dates in 2011."
         const suspiciousDescription = "Service allows you to view the symbols of companies who made suspicious trades on select dates in 2011."
         const trafficDescription = "Service allows you to view active companies on select dates in 2011."
@@ -183,6 +185,14 @@ class Main extends Component {
         const modal1 = showSectorServiceModal ? <ServiceModal title="Sector-Watch" body={sectorDescription} onClose={() => this.toggleSectorModal} onSubscribe={() => this.onSubscribe('Sector-Watch')} isShowing={showSectorServiceModal} ref={this.wrapper}/> : '';
         const modal2 = showSusServiceModal ? <ServiceModal title="Suspicious-Trades-Tracker" body={suspiciousDescription} onClose={() => this.toggleSusModal} onSubscribe={() => this.onSubscribe('Suspicious-Trades-Tracker')} isShowing={showSusServiceModal} ref={this.wrapper}/>: '';
         const modal3 = showTrafficServiceModal ? <ServiceModal title="Traffic-Tracker" body={trafficDescription} onClose={() => this.toggleTrafficModal} onSubscribe={() => this.onSubscribe('Traffic-Tracker')} isShowing={showTrafficServiceModal} ref={this.wrapper}/> : '';
+
+        const sectorWatch = 'Sector-Watch';
+        const suspicious = 'Suspicious-Trades-Tracker';
+        const traffic ='Traffic-Tracker';
+        const showSectorService = (subscribedServices.includes(sectorWatch) && services.includes(sectorWatch));
+        const showSusService = (subscribedServices.includes(suspicious) && services.includes(suspicious));
+        const showTrafficService = (subscribedServices.includes(traffic) && services.includes(traffic));
+
         return (  
             <div id="mainPage">
                 <div>
@@ -192,6 +202,9 @@ class Main extends Component {
                 {modal1}
                 {modal2}
                 {modal3}
+                <Service title={sectorWatch} isShowing={showSectorService} onUnsubscribe={this.onUnSubscribe}/>
+                <Service title={suspicious} isShowing={showSusService} onUnsubscribe={this.onUnSubscribe}/>
+                <Service title={traffic} isShowing={showTrafficService} onUnsubscribe={this.onUnSubscribe}/>
             </div>
         );
     }

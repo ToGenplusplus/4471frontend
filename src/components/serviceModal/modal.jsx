@@ -5,6 +5,9 @@ import Button from 'react-bootstrap/Button';
 import './modal.css';
 
 class ServiceModal extends Component {
+    constructor(props) {
+        super(props);
+        this.wrapper = React.createRef();  }
     state = { }
 
 
@@ -13,16 +16,16 @@ class ServiceModal extends Component {
         const {title,body,onSubscribe,onClose,isShowing} = this.props;
         return ( 
             <Modal show={isShowing} onHide={onClose(title)} backdrop="static"
-            keyboard={false}>
+            keyboard={false} ref={this.wrapper}>
                 <Modal.Header closeButton>
                 <Modal.Title>{title}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>{body}</Modal.Body>
                 <Modal.Footer>
-                <Button variant="secondary" onClick={onClose(title)}>
+                <Button variant="secondary" onClick={onClose(title)} ref={this.wrapper}>
                     Close
                 </Button>
-                <Button variant="primary" onClick={onSubscribe} style={{backgroundColor:"purple"}}>
+                <Button variant="primary" onClick={onSubscribe} style={{backgroundColor:"purple"}} ref={this.wrapper}>
                     Subscribe
                 </Button>
                 </Modal.Footer>

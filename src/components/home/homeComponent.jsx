@@ -48,7 +48,8 @@ class Home extends Component {
               this.setState({isAdmin: true});
               this.toggleDisplay();
             }else{
-                userarray = [info._id,info.isAdmin,info.username,info.services];
+                const subservices = info.services.map((obj) => {return obj.name})
+                userarray = [info._id,info.isAdmin,info.username,subservices];
                 this.setCurrentUser(userarray);
                 this.toggleDisplay();
             }

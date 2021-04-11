@@ -11,39 +11,65 @@ class ServiceTable extends Component {
         this.setState({content:content});
     }
 
+    extractSecServiceData = (dataContent) => {
+        const dataRows = dataContent.map((sector,index) => {
+            const hasChangeValue = sector[4] !== null;
+            let valuestyle;
+            if (hasChangeValue){
+                valuestyle = {
+                    color: parseFloat(sector[5]) > 0 ? "green" : "red"
+                }
+            }else{
+                valuestyle = {}
+            }
+            return (
+                <tr key={index}>
+                    <td>{sector[0]}</td>
+                    <td>{sector[1]}</td>
+                    <td>{sector[2]}</td>
+                    <td>{sector[3]}</td>
+                    <td style={valuestyle}>{hasChangeValue ? sector[4]:'N/A'}</td>
+                    <td style={valuestyle}>{hasChangeValue ? sector[4]:'N/A'}</td>
+                </tr>
+        
+            );
+        })
+
+        return dataRows;
+    };
+
+    extractSusServiceData = (content) => {
+        
+    };
+
+    extractTrafficServiceData = (content) => {
+        
+    };
+
     render() { 
 
-        const {headers, isShowing} = this.props;
+        const {headers, isShowing, whichService} = this.props;
+
+        const {content} = this.state;
+        
+
+        const serviceHeaders = headers.map((heading) => {return <th key={heading}>{heading}</th>})
+
+        let tableData;
+        if (whichService === 'Sector-Watch'){
+            tableData = this.extractSecServiceData(content);
+        }
 
         return (  
-            <div className="serviceTable">
+            <div className="serviceTable" style={{display: isShowing ? "block":"none"}}>
                 <Table striped bordered hover size="sm">
                     <thead>
                         <tr>
-                        <th>#</th>
-                        <th>First Name</th>
-                        <th>Last Name</th>
-                        <th>Username</th>
+                        {serviceHeaders}
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                        <td>1</td>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                        </tr>
-                        <tr>
-                        <td>2</td>
-                        <td>Jacob</td>
-                        <td>Thornton</td>
-                        <td>@fat</td>
-                        </tr>
-                        <tr>
-                        <td>3</td>
-                        <td colSpan="2">Larry the Bird</td>
-                        <td>@twitter</td>
-                        </tr>
+                        {tableData}
                     </tbody>
                 </Table>
             </div>
@@ -56,5 +82,6 @@ ServiceTable.propTypes = {
     headers: PropTypes.array,
     content: PropTypes.array, //contains arrays for each row
     isShowing: PropTypes.bool,
+    whichService: PropTypes.string,
 }
 export default ServiceTable;
