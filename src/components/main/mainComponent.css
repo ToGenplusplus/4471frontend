@@ -13,12 +13,13 @@
     font-weight: bolder;
 }
 
-#notsubmessage {
-    /* Center vertically and horizontally */
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+.platformMessage {
+    max-width: 60%;
+    text-align: center;
+    position: relative;
+    top: 10%;
+    left: 20%;
     padding: 10px;
+    margin-top: 20px;
   }
 

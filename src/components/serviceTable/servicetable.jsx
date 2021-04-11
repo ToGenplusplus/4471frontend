@@ -39,7 +39,7 @@ class ServiceTable extends Component {
                     <td>{sector[2]}</td>
                     <td>{sector[3]}</td>
                     <td style={valuestyle}>{hasChangeValue ? sector[4]:'N/A'}</td>
-                    <td style={valuestyle}>{hasChangeValue ? sector[4]:'N/A'}</td>
+                    <td style={valuestyle}>{hasChangeValue ? sector[5]:'N/A'}</td>
                 </tr>
         
             );
@@ -48,12 +48,15 @@ class ServiceTable extends Component {
         return dataRows;
     };
 
-    extractSusServiceData = (content) => {
-        
-    };
-
-    extractTrafficServiceData = (content) => {
-        
+    extractServiceData = (dataContent) => {
+        const dataRows = dataContent.map((company, index) => {
+            return (
+                <tr key={index}>
+                    <td>{company}</td>
+                </tr>
+            );
+        })
+        return dataRows;
     };
 
     render() { 
@@ -68,6 +71,8 @@ class ServiceTable extends Component {
         let tableData;
         if (whichService === 'Sector-Watch'){
             tableData = this.extractSecServiceData(rendercontent);
+        }else{
+            tableData = this.extractServiceData(rendercontent);
         }
 
         return (  

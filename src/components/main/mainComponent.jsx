@@ -146,6 +146,8 @@ class Main extends Component {
         const dropItemOne = isSecAvailable ? <NavDropdown.Item onClick={() => this.toggleSectorModal()} ref={this.wrapper}>{sectorWatch}</NavDropdown.Item> : '';
         const dropItemTwo = isSusAvailable ? <NavDropdown.Item onClick={() => this.toggleSusModal()} ref={this.wrapper}>{suspicious}</NavDropdown.Item> : '';
         const dropItemThree = isTrafficAvailable ? <NavDropdown.Item onClick={() => this.toggleTrafficModal()} ref={this.wrapper}>{traffic}</NavDropdown.Item> : '';
+        const noAvailableService = (!isSecAvailable && !isSusAvailable && !isTrafficAvailable)
+        const dropItemFour = noAvailableService ? <NavDropdown.Item ref={this.wrapper} disabled> No available service</NavDropdown.Item> : '';
     
         return (
             <Navbar expand="lg" style={navbarstyle}>
@@ -157,10 +159,11 @@ class Main extends Component {
                         {dropItemOne}
                         {dropItemTwo}
                         {dropItemThree}
+                        {dropItemFour}
                     </NavDropdown>
                     </Nav>
                     <Nav>
-                        <Nav.Link href="#link" id="username" className="navbaritems" disabled>{userinfo[2]}</Nav.Link>
+                        <Nav.Link  id="username" className="navbaritems" disabled>{userinfo[2]}</Nav.Link>
                         <Nav.Link onClick={() => this.onLogoutClick()} ref={this.wrapper} >Logout</Nav.Link>
                     </Nav>
                 </Navbar.Collapse>
@@ -173,7 +176,7 @@ class Main extends Component {
         const sectorDescription = "Service allows you to view sector performance for select dates in 2011."
         const suspiciousDescription = "Service allows you to view the symbols of companies who made suspicious trades on select dates in 2011."
         const trafficDescription = "Service allows you to view active companies on select dates in 2011."
-        const message = subscribedServices.length === 0 ? <div id="notsubmessage"><h3>You are not subscribed to any services.<br></br> View the services menu for available services to subscribe to!</h3></div>:'';
+        const message = subscribedServices.length === 0 ? <h3>You are not subscribed to any services.<br></br> View the services menu for available services to subscribe to!</h3>:'';
 
         const modal1 = showSectorServiceModal ? <ServiceModal title="Sector-Watch" body={sectorDescription} CloseModal={this.toggleSectorModal} onSub={this.onSubscribe} isShowing={showSectorServiceModal} ref={this.wrapper}/> : '';
         const modal2 = showSusServiceModal ? <ServiceModal title="Suspicious-Trades-Tracker" body={suspiciousDescription} CloseModal={this.toggleSusModal} onSub={this.onSubscribe} isShowing={showSusServiceModal} ref={this.wrapper}/>: '';
@@ -186,12 +189,28 @@ class Main extends Component {
         const showSusService = (subscribedServices.includes(suspicious) && services.includes(suspicious));
         const showTrafficService = (subscribedServices.includes(traffic) && services.includes(traffic));
 
+        let servicesUnavailable;
+        if (subscribedServices.length > 0){
+            servicesUnavailable = subscribedServices.map((service) => {
+                if (!services.includes(service)){
+                    return <h3 key={service}>Subcribed service: {service} is currrently unavailable.</h3>
+                }
+                return '';
+        })
+        }else{
+            servicesUnavailable = ''
+        } 
+
+        const displayMessage = (message === '') ? servicesUnavailable: message
+
         return (  
             <div id="mainPage">
                 <div>
                 {this.navbar()}
                 </div>
-                {message}
+                <div className="platformMessage">
+                    {displayMessage}
+                </div>
                 {modal1}
                 {modal2}
                 {modal3}
