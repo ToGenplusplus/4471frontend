@@ -10,22 +10,21 @@ class ServiceModal extends Component {
         this.wrapper = React.createRef();  }
     state = { }
 
-
     render() { 
 
-        const {title,body,onSubscribe,onClose,isShowing} = this.props;
+        const {title,body,isShowing,CloseModal, onSub} = this.props;
         return ( 
-            <Modal show={isShowing} onHide={onClose(title)} backdrop="static"
+            <Modal show={isShowing} onHide={CloseModal} backdrop="static"
             keyboard={false} ref={this.wrapper}>
                 <Modal.Header closeButton>
                 <Modal.Title>{title}</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>{body}</Modal.Body>
                 <Modal.Footer>
-                <Button variant="secondary" onClick={onClose(title)} ref={this.wrapper}>
+                <Button variant="secondary" onClick={CloseModal} ref={this.wrapper}>
                     Close
                 </Button>
-                <Button variant="primary" onClick={onSubscribe} style={{backgroundColor:"purple"}} ref={this.wrapper}>
+                <Button variant="primary" onClick={() => onSub(title)} style={{backgroundColor:"purple"}} ref={this.wrapper}>
                     Subscribe
                 </Button>
                 </Modal.Footer>
@@ -37,8 +36,8 @@ class ServiceModal extends Component {
 ServiceModal.propTypes = {
     title: PropTypes.string.isRequired,
     body: PropTypes.string.isRequired,
-    onSubscribe: PropTypes.func.isRequired,
-    onClose: PropTypes.func.isRequired,
+    onSub: PropTypes.func.isRequired,
+    CloseModal: PropTypes.func.isRequired,
     isShowing: PropTypes.bool.isRequired,
 }
  

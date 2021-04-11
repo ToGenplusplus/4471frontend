@@ -4,11 +4,21 @@ import Table from 'react-bootstrap/Table';
 import "./servicetable.css";
 
 class ServiceTable extends Component {
-    state = { content: [] }
+    state = { rendercontent: [] }
 
     componentDidMount(){
         const {content} = this.props;
-        this.setState({content:content});
+        this.setState({rendercontent:content});
+    }
+
+    componentDidUpdate(prevprops){
+        if (this.props.content !== prevprops.content){
+            this.updateRender(this.props.content);
+        }
+    }
+
+    updateRender = (content) => {
+        this.setState({rendercontent: content});
     }
 
     extractSecServiceData = (dataContent) => {
@@ -50,14 +60,14 @@ class ServiceTable extends Component {
 
         const {headers, isShowing, whichService} = this.props;
 
-        const {content} = this.state;
+        const {rendercontent} = this.state;
         
 
         const serviceHeaders = headers.map((heading) => {return <th key={heading}>{heading}</th>})
 
         let tableData;
         if (whichService === 'Sector-Watch'){
-            tableData = this.extractSecServiceData(content);
+            tableData = this.extractSecServiceData(rendercontent);
         }
 
         return (  

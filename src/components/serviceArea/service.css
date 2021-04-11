@@ -1,7 +1,7 @@
 .servicesDiv {
     border: 2px solid;
     width: 800px;
-    height: 600px;
+    height: 500px;
     /* Center vertically and horizontally */
     position: absolute;
     top: 60%;
@@ -12,7 +12,7 @@
 
 .unsubscribeButton {
     position: absolute;
-    bottom: 8px;
+    bottom: 3px;
     right:16px;
     background-color: purple;
 }

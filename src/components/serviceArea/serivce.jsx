@@ -11,7 +11,7 @@ class Service extends Component {
     constructor(props) {
         super(props);
         this.wrapper = React.createRef();  }
-    state = { dateSelected:false, sectorContent:[], susContent:[], trafficContent:[] }
+    state = { dateSelected:false, dateChosen: '', sectorContent:[], susContent:[], trafficContent:[] }
 
     formatDate = (date)=> {
         const vals = date.split("-");
@@ -23,6 +23,7 @@ class Service extends Component {
         const {title} = this.props;
         const {dateSelected} = this.state;
 
+        this.setState({dateChosen:date })
         if (!dateSelected){
             this.setState({dateSelected: !dateSelected});
         }
@@ -60,11 +61,12 @@ class Service extends Component {
     formatPerformanceData = (data) => {
         let performanceArray = [];
         data.forEach((sector) => {
+            const nullval = sector.change === null;
             const close = sector.close /10000;
             const high = sector.high/10000;
             const low = sector.low/10000;
-            const change = sector.change !== 0 ? sector.change/10000 : sector.change;
-            const changepct  = sector.change_pct.toFixed(2);
+            const change = (sector.change !== 0 && !nullval) ? sector.change/10000 : sector.change;
+            const changepct  = nullval ? null: sector.change_pct.toFixed(2);
             let dataArray = [sector.sector_name,close,high,low,change,changepct];
             performanceArray.push(dataArray);
         })
@@ -145,6 +147,7 @@ class Service extends Component {
     }
     render() { 
         const {title, onUnsubscribe,isShowing} = this.props;
+        const {dateSelected, dateChosen} = this.state;
         
         const display = this.displayTable(title);
 
@@ -152,6 +155,7 @@ class Service extends Component {
         <div className="servicesDiv" style={{display: isShowing ? "block" : "none"}}>
             <h3>{title}</h3>
             {this.dateDropdown()}
+            <label id="dateselected" style={{display: dateSelected ? "block" : "none", fontWeight:"bold", marginTop:"20px"}}>Date: {dateChosen}</label>
             {display}
             <Button variant="primary" onClick={() => onUnsubscribe(title)} className="unsubscribeButton">
                     Unsubscribe

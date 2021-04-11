@@ -1,5 +1,6 @@
 .serviceTable{
-    margin-top: 33px;
-    height: 380px;
+    margin-top: 15px;
+    height: 280px;
     overflow-y: auto;
+    position: relative;
 }

@@ -16,6 +16,7 @@ class Main extends Component {
     
     componentDidMount (){
         this.setSubScribedServices();
+        this.getAvailableServices();
     }
 
     getAvailableServices = () => {
@@ -42,7 +43,6 @@ class Main extends Component {
           if (data.statusCode === 200){
             let info = JSON.parse(res.data.body); 
             this.setState({subscribedServices: info});
-            console.log("subscribed services ", info);
           }
           })
           .catch((e) => console.error(e));
@@ -53,11 +53,12 @@ class Main extends Component {
         const servicespath = "https://425ee274.us-south.apigw.appdomain.cloud/service/"
         const aservicespath = servicespath + "subscribe";
         const {subscribedServices} = this.state;
-
+        
         if (!subscribedServices.includes(servicename)){
             axios.post(aservicespath, {
                 serviceName: servicename,
                 user_id:userinfo[0],
+                user_name:userinfo[2],
             })
             .then((resp) => {
                 console.log(resp);
@@ -65,8 +66,9 @@ class Main extends Component {
                     this.getSubscribedServices();
                 }
             })
-            .catch((e) => console.error(e))
+            .catch((e) => console.error(e.response))
         }
+        
 
         if (servicename === "Sector-Watch"){
             this.toggleSectorModal()
@@ -94,14 +96,6 @@ class Main extends Component {
                 }
             })
             .catch((e) => console.error(e))
-        }
-
-        if (servicename === "Sector-Watch"){
-            this.toggleSectorModal()
-        }else if (servicename === "Suspicious-Trades-Tracker"){
-            this.toggleSusModal()
-        }else{
-            this.toggleTrafficModal()
         }
     };
 
@@ -140,7 +134,6 @@ class Main extends Component {
         }
         const {userinfo} = this.props;
         const {services} = this.state;
-        this.getAvailableServices();
     
         const sectorWatch = 'Sector-Watch';
         const suspicious = 'Suspicious-Trades-Tracker';
@@ -182,9 +175,9 @@ class Main extends Component {
         const trafficDescription = "Service allows you to view active companies on select dates in 2011."
         const message = subscribedServices.length === 0 ? <div id="notsubmessage"><h3>You are not subscribed to any services.<br></br> View the services menu for available services to subscribe to!</h3></div>:'';
 
-        const modal1 = showSectorServiceModal ? <ServiceModal title="Sector-Watch" body={sectorDescription} onClose={() => this.toggleSectorModal} onSubscribe={() => this.onSubscribe('Sector-Watch')} isShowing={showSectorServiceModal} ref={this.wrapper}/> : '';
-        const modal2 = showSusServiceModal ? <ServiceModal title="Suspicious-Trades-Tracker" body={suspiciousDescription} onClose={() => this.toggleSusModal} onSubscribe={() => this.onSubscribe('Suspicious-Trades-Tracker')} isShowing={showSusServiceModal} ref={this.wrapper}/>: '';
-        const modal3 = showTrafficServiceModal ? <ServiceModal title="Traffic-Tracker" body={trafficDescription} onClose={() => this.toggleTrafficModal} onSubscribe={() => this.onSubscribe('Traffic-Tracker')} isShowing={showTrafficServiceModal} ref={this.wrapper}/> : '';
+        const modal1 = showSectorServiceModal ? <ServiceModal title="Sector-Watch" body={sectorDescription} CloseModal={this.toggleSectorModal} onSub={this.onSubscribe} isShowing={showSectorServiceModal} ref={this.wrapper}/> : '';
+        const modal2 = showSusServiceModal ? <ServiceModal title="Suspicious-Trades-Tracker" body={suspiciousDescription} CloseModal={this.toggleSusModal} onSub={this.onSubscribe} isShowing={showSusServiceModal} ref={this.wrapper}/>: '';
+        const modal3 = showTrafficServiceModal ? <ServiceModal title="Traffic-Tracker" body={trafficDescription} CloseModal={this.toggleTrafficModal} onSub={this.onSubscribe} isShowing={showTrafficServiceModal} ref={this.wrapper}/> : '';
 
         const sectorWatch = 'Sector-Watch';
         const suspicious = 'Suspicious-Trades-Tracker';
