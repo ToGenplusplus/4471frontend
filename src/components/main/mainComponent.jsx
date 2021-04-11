@@ -12,11 +12,21 @@ class Main extends Component {
     constructor(props) {
         super(props);
         this.wrapper = React.createRef();  }
-    state = { services: [], subscribedServices:[], showSectorServiceModal:false,showSusServiceModal:false,showTrafficServiceModal:false}
+    state = { services: [], subscribedServices:[], showSectorServiceModal:false,showSusServiceModal:false,showTrafficServiceModal:false, appMesage:''}
     
     componentDidMount (){
         this.setSubScribedServices();
         this.getAvailableServices();
+    }
+
+    componentDidUpdate(prevProps,prevState){
+        if (this.state.subscribedServices !== prevState.subscribedServices){
+            this.handleAppMessage();
+        }
+
+        if (this.state.services !== prevState.services){
+            this.handleAppMessage();
+        }
     }
 
     getAvailableServices = () => {
@@ -61,7 +71,6 @@ class Main extends Component {
                 user_name:userinfo[2],
             })
             .then((resp) => {
-                console.log(resp);
                 if (resp.data.statusCode === 200){
                     this.getSubscribedServices();
                 }
@@ -90,7 +99,6 @@ class Main extends Component {
                 user_id:userinfo[0],
             })    
             .then((resp) => {
-                console.log(resp);
                 if (resp.data.statusCode === 200){
                     this.getSubscribedServices();
                 }
@@ -127,6 +135,28 @@ class Main extends Component {
     onLogoutClick = () => {
         window.location.reload();
     };
+
+    handleAppMessage = () => {
+        const {services, subscribedServices} = this.state;
+
+        const message = subscribedServices.length === 0 ? <h3>You are not subscribed to any services.<br></br> View the services menu for available services to subscribe to!</h3>:'';
+
+        let servicesUnavailable;
+        if (subscribedServices.length > 0){
+            servicesUnavailable = subscribedServices.map((service) => {
+                if (!services.includes(service)){
+                    return <h3 key={service}>Subcribed service: {service} is currrently unavailable.</h3>
+                }
+                return '';
+        })
+        }else{
+            servicesUnavailable = ''
+        } 
+
+        const displayMessage = (message === '') ? servicesUnavailable: message
+        console.log('called');
+        this.setState({appMesage: displayMessage});
+    }
 
     navbar = () => {
         const navbarstyle = {
@@ -172,11 +202,11 @@ class Main extends Component {
     };
 
     render() { 
-        const {services, subscribedServices, showSectorServiceModal, showSusServiceModal, showTrafficServiceModal} = this.state;
+        const {services, subscribedServices, showSectorServiceModal, showSusServiceModal, showTrafficServiceModal,appMesage} = this.state;
         const sectorDescription = "Service allows you to view sector performance for select dates in 2011."
         const suspiciousDescription = "Service allows you to view the symbols of companies who made suspicious trades on select dates in 2011."
         const trafficDescription = "Service allows you to view active companies on select dates in 2011."
-        const message = subscribedServices.length === 0 ? <h3>You are not subscribed to any services.<br></br> View the services menu for available services to subscribe to!</h3>:'';
+        //const message = subscribedServices.length === 0 ? <h3>You are not subscribed to any services.<br></br> View the services menu for available services to subscribe to!</h3>:'';
 
         const modal1 = showSectorServiceModal ? <ServiceModal title="Sector-Watch" body={sectorDescription} CloseModal={this.toggleSectorModal} onSub={this.onSubscribe} isShowing={showSectorServiceModal} ref={this.wrapper}/> : '';
         const modal2 = showSusServiceModal ? <ServiceModal title="Suspicious-Trades-Tracker" body={suspiciousDescription} CloseModal={this.toggleSusModal} onSub={this.onSubscribe} isShowing={showSusServiceModal} ref={this.wrapper}/>: '';
@@ -189,6 +219,7 @@ class Main extends Component {
         const showSusService = (subscribedServices.includes(suspicious) && services.includes(suspicious));
         const showTrafficService = (subscribedServices.includes(traffic) && services.includes(traffic));
 
+        /*
         let servicesUnavailable;
         if (subscribedServices.length > 0){
             servicesUnavailable = subscribedServices.map((service) => {
@@ -202,14 +233,14 @@ class Main extends Component {
         } 
 
         const displayMessage = (message === '') ? servicesUnavailable: message
-
+        */
         return (  
             <div id="mainPage">
                 <div>
                 {this.navbar()}
                 </div>
                 <div className="platformMessage">
-                    {displayMessage}
+                    {appMesage}
                 </div>
                 {modal1}
                 {modal2}
