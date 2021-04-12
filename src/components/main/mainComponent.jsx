@@ -218,16 +218,22 @@ class Main extends Component {
         const suspiciousDescription = "Service allows you to view the symbols of companies who made suspicious trades on select dates in 2011."
         const trafficDescription = "Service allows you to view active companies on select dates in 2011."
 
-        const modal1 = showSectorServiceModal ? <ServiceModal title="Sector-Watch" body={sectorDescription} CloseModal={this.toggleSectorModal} onSub={this.onSubscribe} isShowing={showSectorServiceModal} ref={this.wrapper}/> : '';
-        const modal2 = showSusServiceModal ? <ServiceModal title="Suspicious-Trades-Tracker" body={suspiciousDescription} CloseModal={this.toggleSusModal} onSub={this.onSubscribe} isShowing={showSusServiceModal} ref={this.wrapper}/>: '';
-        const modal3 = showTrafficServiceModal ? <ServiceModal title="Traffic-Tracker" body={trafficDescription} CloseModal={this.toggleTrafficModal} onSub={this.onSubscribe} isShowing={showTrafficServiceModal} ref={this.wrapper}/> : '';
 
         const sectorWatch = 'Sector-Watch';
         const suspicious = 'Suspicious-Trades-Tracker';
         const traffic ='Traffic-Tracker';
-        const showSectorService = (subscribedServices.includes(sectorWatch) && services.includes(sectorWatch));
-        const showSusService = (subscribedServices.includes(suspicious) && services.includes(suspicious));
-        const showTrafficService = (subscribedServices.includes(traffic) && services.includes(traffic));
+
+        const isSecSubscribed = subscribedServices.includes(sectorWatch);
+        const isSusSubscribed = subscribedServices.includes(suspicious);
+        const isTrafficSubscribed = subscribedServices.includes(traffic);
+
+        const showSectorService = (isSecSubscribed && services.includes(sectorWatch));
+        const showSusService = (isSusSubscribed && services.includes(suspicious));
+        const showTrafficService = (isTrafficSubscribed && services.includes(traffic));
+
+        const modal1 = showSectorServiceModal ? <ServiceModal title="Sector-Watch" body={sectorDescription} CloseModal={this.toggleSectorModal} onSub={this.onSubscribe} isShowing={showSectorServiceModal} ref={this.wrapper} isDisabled={isSecSubscribed}/> : '';
+        const modal2 = showSusServiceModal ? <ServiceModal title="Suspicious-Trades-Tracker" body={suspiciousDescription} CloseModal={this.toggleSusModal} onSub={this.onSubscribe} isShowing={showSusServiceModal} ref={this.wrapper} isDisabled={isSusSubscribed}/>: '';
+        const modal3 = showTrafficServiceModal ? <ServiceModal title="Traffic-Tracker" body={trafficDescription} CloseModal={this.toggleTrafficModal} onSub={this.onSubscribe} isShowing={showTrafficServiceModal} ref={this.wrapper} isDisabled={isTrafficSubscribed}/> : '';
         
         return (  
             <div id="mainPage">

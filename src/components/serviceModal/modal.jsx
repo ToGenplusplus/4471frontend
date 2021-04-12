@@ -8,11 +8,30 @@ class ServiceModal extends Component {
     constructor(props) {
         super(props);
         this.wrapper = React.createRef();  }
-    state = { }
+    state = {buttonactive:true}
+
+    componentDidMount(){
+        this.setState({buttonactive: this.props.isDisabled});
+    }
+
+    componentDidUpdate(prevProps,prevState){
+        console.log("prevProps ",prevProps,"currProps", this.props);
+        if(prevProps.isDisabled !== this.props.isDisabled){
+            this.setState({buttonactive: this.props.isDisabled});
+        }
+    }
 
     render() { 
 
         const {title,body,isShowing,CloseModal, onSub} = this.props;
+        const {buttonactive} = this.state;
+
+        let subButton;
+        if (buttonactive){
+            subButton = <Button variant="primary" onClick={() => onSub(title)} style={{backgroundColor:"purple"}} ref={this.wrapper} disabled>Subscribe</Button>
+        }else{
+            subButton = <Button variant="primary" onClick={() => onSub(title)} style={{backgroundColor:"purple"}} ref={this.wrapper}>Subscribe</Button>
+        }
         return ( 
             <Modal show={isShowing} onHide={CloseModal} backdrop="static"
             keyboard={false} ref={this.wrapper}>
@@ -24,9 +43,7 @@ class ServiceModal extends Component {
                 <Button variant="secondary" onClick={CloseModal} ref={this.wrapper}>
                     Close
                 </Button>
-                <Button variant="primary" onClick={() => onSub(title)} style={{backgroundColor:"purple"}} ref={this.wrapper}>
-                    Subscribe
-                </Button>
+                {subButton}
                 </Modal.Footer>
             </Modal> 
           );
@@ -39,6 +56,7 @@ ServiceModal.propTypes = {
     onSub: PropTypes.func.isRequired,
     CloseModal: PropTypes.func.isRequired,
     isShowing: PropTypes.bool.isRequired,
+    isDisabled: PropTypes.bool,
 }
  
 export default ServiceModal;
