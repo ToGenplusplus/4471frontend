@@ -212,6 +212,8 @@ class Main extends Component {
 
     render() { 
         const {services, subscribedServices, showSectorServiceModal, showSusServiceModal, showTrafficServiceModal,appMesage} = this.state;
+        const {userinfo} = this.props;
+        const currentUser = userinfo[2];
         const sectorDescription = "Service allows you to view sector performance for select dates in 2011."
         const suspiciousDescription = "Service allows you to view the symbols of companies who made suspicious trades on select dates in 2011."
         const trafficDescription = "Service allows you to view active companies on select dates in 2011."
@@ -237,6 +239,9 @@ class Main extends Component {
             <div id="mainPage">
                 <div>
                 {this.navbar()}
+                </div>
+                <div id="dashboard">
+                    <h1><span id="cUser">{currentUser}'s</span> Dashboard</h1>
                 </div>
                 <div className="platformMessage">
                     {appMesage}

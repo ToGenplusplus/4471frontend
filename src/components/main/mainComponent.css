@@ -4,6 +4,11 @@
     font-size: large;
 }
 
+#cUser{
+    font-weight: bold;
+    padding-left: 2%;
+}
+
 #title{
     color: white;
 }
@@ -13,6 +18,9 @@
     font-weight: bolder;
 }
 
+#dashboard{
+    margin-top: 1%;
+}
 .platformMessage {
     max-width: 60%;
     text-align: center;
