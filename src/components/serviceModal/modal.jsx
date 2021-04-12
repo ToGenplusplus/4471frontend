@@ -15,7 +15,6 @@ class ServiceModal extends Component {
     }
 
     componentDidUpdate(prevProps,prevState){
-        console.log("prevProps ",prevProps,"currProps", this.props);
         if(prevProps.isDisabled !== this.props.isDisabled){
             this.setState({buttonactive: this.props.isDisabled});
         }

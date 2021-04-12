@@ -71,6 +71,7 @@ class Main extends Component {
     };
 
     onSubscribe = (servicename) => {
+        this.subscriptionMessage(servicename);
         const {userinfo} = this.props;
         const servicespath = "https://425ee274.us-south.apigw.appdomain.cloud/service/"
         const aservicespath = servicespath + "subscribe";
@@ -119,6 +120,12 @@ class Main extends Component {
         }
     };
 
+    subscriptionMessage = (servicename) => {
+        const {subscribedServices} = this.state;
+        const servicesubbed = subscribedServices.includes(servicename);
+        const message = servicesubbed ? '': <h5>Subscribing to service .. {servicename}</h5>;
+        this.setState({appMesage: message});
+    };
 
     setSubScribedServices = () => {
         const {userinfo} = this.props;
