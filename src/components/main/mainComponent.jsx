@@ -119,7 +119,7 @@ class Main extends Component {
     subscriptionMessage = (servicename) => {
         const {subscribedServices} = this.state;
         const servicesubbed = subscribedServices.includes(servicename);
-        const message = servicesubbed ? '': <h5>Subscribing to service .. {servicename}</h5>;
+        const message = servicesubbed ? '': <h5>Subscribing to service {servicename} ...</h5>;
         this.setState({appMesage: message});
     };
 
