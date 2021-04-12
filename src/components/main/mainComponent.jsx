@@ -64,7 +64,6 @@ class Main extends Component {
     };
 
     getAvailableServices = () => {
-        console.log("called get services from main");
         const servicespath = "https://425ee274.us-south.apigw.appdomain.cloud/service/"
         const aservicespath = servicespath + "getservices"
           axios.get(aservicespath, {
