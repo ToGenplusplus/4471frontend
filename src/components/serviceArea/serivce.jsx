@@ -154,7 +154,6 @@ class Service extends Component {
 
         return displayTable;
     }
-
     onClick = (title)=>{
         this.props.onUnsubscribe(title);
         this.setState({

@@ -16,17 +16,21 @@ class Main extends Component {
         this.wrapper = React.createRef();  
         source = axios.CancelToken.source();
     }
-    state = { services: [], subscribedServices:[], showSectorServiceModal:false,showSusServiceModal:false,showTrafficServiceModal:false, appMesage:''}
+    state = { services: [], subscribedServices:[], showSectorServiceModal:false,showSusServiceModal:false,showTrafficServiceModal:false, appMesage:'', intervalID:''}
     
     componentDidMount (){
         this.setSubScribedServices();
         this.setAvailableServicesOnMount();
+        var intervalID = setInterval(this.checkForServices,5000);
+        this.setState({intervalID: intervalID});
     }
 
     componentWillUnmount(){
         if (source) {
             source.cancel("Main Component got unmounted");
         }
+
+        clearInterval(this.state.intervalID);
     }
 
     componentDidUpdate(prevProps,prevState){
@@ -59,12 +63,34 @@ class Main extends Component {
         this.setState({subscribedServices: userinfo[3]})
     };
 
+    getAvailableServices = () => {
+        console.log("called get services from main");
+        const servicespath = "https://425ee274.us-south.apigw.appdomain.cloud/service/"
+        const aservicespath = servicespath + "getservices"
+          axios.get(aservicespath, {
+            cancelToken: source.token
+          })
+          .then((res) => {
+          const data = res.data
+          if (data.statusCode === 200){
+            let info = JSON.parse(res.data.body); 
+            this.setState({services: info.services});
+          }
+          })
+          .catch((e) => console.error(e));
+      };
+
+
     setAvailableServicesOnMount = () => {
         const {appServices} = this.props;
         this.setState({
             services:appServices
         })
-    }
+    };
+
+    checkForServices = ()=> {
+        this.getAvailableServices();
+    };
 
     onSubscribe = (servicename) => {
         this.subscriptionMessage(servicename);
@@ -144,6 +170,10 @@ class Main extends Component {
 
     onLogoutClick = () => {
         window.location.reload();
+    };
+
+    onServiceDropdownClick =() => {
+        this.getAvailableServices();
     };
 
     handleAppMessage = () => {
@@ -249,9 +279,9 @@ class Main extends Component {
                 {modal1}
                 {modal2}
                 {modal3}
-                <Service title={sectorWatch} isShowing={showSectorService} onUnsubscribe={this.onUnSubscribe}/>
-                <Service title={suspicious} isShowing={showSusService} onUnsubscribe={this.onUnSubscribe}/>
-                <Service title={traffic} isShowing={showTrafficService} onUnsubscribe={this.onUnSubscribe}/>
+                <Service title={sectorWatch} isShowing={showSectorService} onUnsubscribe={this.onUnSubscribe} dropClick={this.onServiceDropdownClick}/>
+                <Service title={suspicious} isShowing={showSusService} onUnsubscribe={this.onUnSubscribe} dropClick={this.onServiceDropdownClick}/>
+                <Service title={traffic} isShowing={showTrafficService} onUnsubscribe={this.onUnSubscribe} dropClick={this.onServiceDropdownClick}/>
             </div>
         );
     }
