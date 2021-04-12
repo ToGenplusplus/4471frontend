@@ -7,13 +7,24 @@ import Main from '../main/mainComponent';
 import Admin from '../admin/adminComponent';
 import './homeComponent.css'
 
+let source;
 
 class Home extends Component {
 
     constructor() {
         super();
-        this.state = { userinfo:[], isAdmin: false, errormessage:'', isDisplaying: true, loginClicked:false};
+        this.state = { userinfo:[], isAdmin: false, errormessage:'', isDisplaying: true, loginClicked:false, services:[]};
         this.onLoginButtonClick = this.onLoginButtonClick.bind(this);
+        source = axios.CancelToken.source();
+    }
+    componentDidMount(){
+        this.getAvailableServices();
+    }
+
+    componentWillUnmount(){
+        if (source) {
+            source.cancel("Home Component got unmounted");
+        }
     }
 
     handleError = (e) => {
@@ -32,6 +43,22 @@ class Home extends Component {
     toggleButtonClick = () => {
         this.setState({loginClicked: !this.state.loginClicked})
     }
+
+    getAvailableServices = () => {
+        const servicespath = "https://425ee274.us-south.apigw.appdomain.cloud/service/"
+        const aservicespath = servicespath + "getservices"
+          axios.get(aservicespath, {
+            cancelToken: source.token
+          })
+          .then((res) => {
+          const data = res.data
+          if (data.statusCode === 200){
+            let info = JSON.parse(res.data.body); 
+            this.setState({services: info.services});
+          }
+          })
+          .catch((e) => console.error(e));
+      };
 
     authenticate = (userinfo) => {
         const servicespath = "https://425ee274.us-south.apigw.appdomain.cloud/service/"
@@ -79,7 +106,7 @@ class Home extends Component {
     };
 
     render() { 
-        const {errormessage,isAdmin,userinfo, isDisplaying,loginClicked} = this.state;
+        const {errormessage,isAdmin,userinfo, isDisplaying,loginClicked,services} = this.state;
         const buttonstyle = {
             backgroundColor: "purple",
             padding : 10,
@@ -99,7 +126,7 @@ class Home extends Component {
             }else{
                 if (!isAdmin) {
                     if(userinfo.length !== 0 && loginClicked){
-                        displayed = <Main userinfo={userinfo}/>
+                        displayed = <Main userinfo={userinfo} appServices={services}/>
                     }else if(userinfo.length === 0 && loginClicked){
                         displayed = <div className="error">Entering platform, please wait ... </div>
                     }

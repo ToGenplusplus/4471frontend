@@ -20,7 +20,7 @@ class Main extends Component {
     
     componentDidMount (){
         this.setSubScribedServices();
-        this.getAvailableServices();
+        this.setAvailableServicesOnMount();
     }
 
     componentWillUnmount(){
@@ -39,22 +39,6 @@ class Main extends Component {
         }
     }
 
-    getAvailableServices = () => {
-        const servicespath = "https://425ee274.us-south.apigw.appdomain.cloud/service/"
-        const aservicespath = servicespath + "getservices"
-          axios.get(aservicespath, {
-            cancelToken: source.token
-          })
-          .then((res) => {
-          const data = res.data
-          if (data.statusCode === 200){
-            let info = JSON.parse(res.data.body); 
-            this.setState({services: info.services});
-          }
-          })
-          .catch((e) => console.error(e));
-      };
-
     getSubscribedServices = () => {
         const {userinfo} = this.props;
         const servicespath = "https://425ee274.us-south.apigw.appdomain.cloud/service/"
@@ -69,6 +53,18 @@ class Main extends Component {
           })
           .catch((e) => console.error(e));
     };
+
+    setSubScribedServices = () => {
+        const {userinfo} = this.props;
+        this.setState({subscribedServices: userinfo[3]})
+    };
+
+    setAvailableServicesOnMount = () => {
+        const {appServices} = this.props;
+        this.setState({
+            services:appServices
+        })
+    }
 
     onSubscribe = (servicename) => {
         this.subscriptionMessage(servicename);
@@ -125,11 +121,6 @@ class Main extends Component {
         const servicesubbed = subscribedServices.includes(servicename);
         const message = servicesubbed ? '': <h5>Subscribing to service .. {servicename}</h5>;
         this.setState({appMesage: message});
-    };
-
-    setSubScribedServices = () => {
-        const {userinfo} = this.props;
-        this.setState({subscribedServices: userinfo[3]})
     };
 
     toggleSectorModal = ()=> {
@@ -263,6 +254,7 @@ class Main extends Component {
  
 Main.propTypes = {
     userinfo: PropTypes.array.isRequired,
+    appServices: PropTypes.array.isRequired,
 }
 
 export default Main;

@@ -14,8 +14,13 @@ class Service extends Component {
     state = { dateSelected:false, dateChosen: '', sectorContent:[], susContent:[], trafficContent:[], buttonpressed:false}
 
     componentDidUpdate(prevProps,prevState){
-        console.log(prevState.buttonpressed, this.state.buttonpressed)
+        if (prevState.buttonpressed === true){
+            this.setState({
+                buttonpressed: false
+            }); 
+        }
     }
+ 
 
     formatDate = (date)=> {
         const vals = date.split("-");
