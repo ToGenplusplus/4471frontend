@@ -16,13 +16,13 @@ class Main extends Component {
         this.wrapper = React.createRef();  
         source = axios.CancelToken.source();
     }
-    state = { services: [], subscribedServices:[], showSectorServiceModal:false,showSusServiceModal:false,showTrafficServiceModal:false, appMesage:'', intervalID:''}
+    state = { services: [], subscribedServices:[], showSectorServiceModal:false,showSusServiceModal:false,showTrafficServiceModal:false, appMesage:'', subMessage:'', intervalID1:''}
     
     componentDidMount (){
         this.setSubScribedServices();
         this.setAvailableServicesOnMount();
-        var intervalID = setInterval(this.checkForServices,5000);
-        this.setState({intervalID: intervalID});
+        var intervalID1 = setInterval(this.checkForServices,5000);
+        this.setState({intervalID1: intervalID1});
     }
 
     componentWillUnmount(){
@@ -30,7 +30,7 @@ class Main extends Component {
             source.cancel("Main Component got unmounted");
         }
 
-        clearInterval(this.state.intervalID);
+        clearInterval(this.state.intervalID1);
     }
 
     componentDidUpdate(prevProps,prevState){
@@ -89,6 +89,7 @@ class Main extends Component {
 
     checkForServices = ()=> {
         this.getAvailableServices();
+        this.getSubscribedServices();
     };
 
     onSubscribe = (servicename) => {
@@ -145,7 +146,11 @@ class Main extends Component {
         const {subscribedServices} = this.state;
         const servicesubbed = subscribedServices.includes(servicename);
         const message = servicesubbed ? '': <h5>Subscribing to service {servicename} ...</h5>;
-        this.setState({appMesage: message});
+        this.setState({subMessage: message});
+        setTimeout(() => {
+            this.setState({subMessage: ''});
+        },3500);
+
     };
 
     toggleSectorModal = ()=> {
@@ -240,7 +245,7 @@ class Main extends Component {
     };
 
     render() { 
-        const {services, subscribedServices, showSectorServiceModal, showSusServiceModal, showTrafficServiceModal,appMesage} = this.state;
+        const {services, subscribedServices, showSectorServiceModal, showSusServiceModal, showTrafficServiceModal,appMesage,subMessage} = this.state;
         const {userinfo} = this.props;
         const currentUser = userinfo[2];
         const sectorDescription = "Service allows you to view sector performance for select dates in 2011."
@@ -274,6 +279,7 @@ class Main extends Component {
                 </div>
                 <div className="platformMessage">
                     {appMesage}
+                    {subMessage}
                 </div>
                 {modal1}
                 {modal2}
