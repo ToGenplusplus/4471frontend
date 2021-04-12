@@ -9,6 +9,9 @@ import './homeComponent.css'
 
 let source;
 
+
+const appID = new AppID();
+
 class Home extends Component {
 
     constructor() {
@@ -19,6 +22,7 @@ class Home extends Component {
     }
     componentDidMount(){
         this.getAvailableServices();
+        this.init();
     }
 
     componentWillUnmount(){
@@ -26,6 +30,17 @@ class Home extends Component {
             source.cancel("Home Component got unmounted");
         }
     }
+
+    init = () => {
+        (async () => {
+            try {
+                await appID.init({clientId: "16c9bb34-cb09-473c-9aae-2e903bd596cc", discoveryEndpoint: "https://us-south.appid.cloud.ibm.com/oauth/v4/6facaa33-0f16-45b0-8554-5cba3aa02b8e/.well-known/openid-configuration"});
+            
+            } catch (e) {
+                this.handleError(e)
+            }
+        })();
+    };
 
     handleError = (e) => {
         const reload = `${e} reload page!`;
@@ -89,8 +104,6 @@ class Home extends Component {
     async onLoginButtonClick (){
         try {
             this.toggleButtonClick();
-            const appID = new AppID();
-            await appID.init({clientId: "16c9bb34-cb09-473c-9aae-2e903bd596cc", discoveryEndpoint: "https://us-south.appid.cloud.ibm.com/oauth/v4/6facaa33-0f16-45b0-8554-5cba3aa02b8e/.well-known/openid-configuration"});
             const tokens = await appID.signin();
 
             let userInfo = await appID.getUserInfo(tokens.accessToken);
