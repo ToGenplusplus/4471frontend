@@ -123,7 +123,7 @@ class Service extends Component {
 
         const dropdownItems = dates.map((date) => {const reqdate = this.formatDate(date);  return <Dropdown.Item as="button" onClick={() => this.handleClick(reqdate)} key={date} ref={this.wrapper}>{date}</Dropdown.Item>} )
         return(
-            <DropdownButton id="dropdown-item-button" title="Select Date" style={{marginTop:"10px"}}>
+            <DropdownButton variant="primary"  title="Select Date" style={{marginTop:"10px"}} className="dropdown">
                 <div style={{overflowY:"auto", height:"200px"}}>
                     {dropdownItems}
                 </div>
@@ -171,7 +171,7 @@ class Service extends Component {
         if (buttonpressed){
             buttonDisplay = <Button variant="primary" className="unsubscribing" disabled>Unsubscribing...</Button>
         }else{
-            buttonDisplay = <Button variant="primary" onClick={() => this.onClick(title)} className="unsubscribeButton">Unsubscribe</Button>
+            buttonDisplay = <Button variant="primary" onClick={() => this.onClick(title)} className="unsubscribeButton colorprop">Unsubscribe</Button>
         }
 
         return (
