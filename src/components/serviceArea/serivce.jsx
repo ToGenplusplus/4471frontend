@@ -11,7 +11,11 @@ class Service extends Component {
     constructor(props) {
         super(props);
         this.wrapper = React.createRef();  }
-    state = { dateSelected:false, dateChosen: '', sectorContent:[], susContent:[], trafficContent:[] }
+    state = { dateSelected:false, dateChosen: '', sectorContent:[], susContent:[], trafficContent:[], buttonpressed:false}
+
+    componentDidUpdate(prevProps,prevState){
+        console.log(prevState.buttonpressed, this.state.buttonpressed)
+    }
 
     formatDate = (date)=> {
         const vals = date.split("-");
@@ -145,11 +149,25 @@ class Service extends Component {
 
         return displayTable;
     }
+
+    onClick = (title)=>{
+        this.props.onUnsubscribe(title);
+        this.setState({
+            buttonpressed: !this.state.buttonpressed
+        });
+    }
+
     render() { 
-        const {title, onUnsubscribe,isShowing} = this.props;
-        const {dateSelected, dateChosen} = this.state;
+        const {title,isShowing} = this.props;
+        const {dateSelected, dateChosen, buttonpressed} = this.state;
         
         const display = this.displayTable(title);
+        let buttonDisplay;
+        if (buttonpressed){
+            buttonDisplay = <Button variant="primary" className="unsubscribing" disabled>Unsubscribing...</Button>
+        }else{
+            buttonDisplay = <Button variant="primary" onClick={() => this.onClick(title)} className="unsubscribeButton">Unsubscribe</Button>
+        }
 
         return (
         <div id={title} className="servicesDiv" style={{display: isShowing ? "block" : "none"}}>
@@ -157,9 +175,7 @@ class Service extends Component {
             {this.dateDropdown()}
             <label id="dateselected" style={{display: dateSelected ? "block" : "none", fontWeight:"bold", marginTop:"10px"}}>Date: {dateChosen}</label>
             {display}
-            <Button variant="primary" onClick={() => onUnsubscribe(title)} className="unsubscribeButton">
-                    Unsubscribe
-            </Button>
+            {buttonDisplay}
         </div>  
         );
     }

@@ -27,7 +27,7 @@ class ServiceModal extends Component {
 
         let subButton;
         if (buttonactive){
-            subButton = <Button variant="primary" onClick={() => onSub(title)} style={{backgroundColor:"purple"}} ref={this.wrapper} disabled>Subscribe</Button>
+            subButton = <Button variant="primary" onClick={() => onSub(title)} style={{backgroundColor:"purple"}} ref={this.wrapper} disabled>already subscribed</Button>
         }else{
             subButton = <Button variant="primary" onClick={() => onSub(title)} style={{backgroundColor:"purple"}} ref={this.wrapper}>Subscribe</Button>
         }
