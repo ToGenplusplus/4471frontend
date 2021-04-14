@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import Button from 'react-bootstrap/Button';
+import 'bootstrap/dist/css/bootstrap.min.css';
 import './buttonComponent.css'
 
 
@@ -10,7 +10,7 @@ class AppButton extends Component {
     render() { 
         const {name, onClickFunction,style} = this.props;
         return (
-                <Button onClick={onClickFunction} style={style}>{name}</Button>
+                <button type="button" onClick={onClickFunction} style={style} className="appButton">{name}</button>
             );
     }
 }

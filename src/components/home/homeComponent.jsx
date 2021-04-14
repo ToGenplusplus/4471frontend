@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import applogo from '../../applogo.png'
+import Navbar from 'react-bootstrap/Navbar';
+import Nav from 'react-bootstrap/Nav';
 import axios from 'axios';
 import AppID from 'ibmcloud-appid-js';
 import AppButton from '../button/buttonComponent'
@@ -117,13 +118,36 @@ class Home extends Component {
             this.handleError(e.message);
           }
     };
+    navbar = () => {
+        const navbarstyle = {
+            backgroundColor: "transparent",
+            fontWeight: "bolder",
+            marginBottom:"20px",
+        }
+        
+    
+        return (
+            <Navbar expand="lg" style={navbarstyle}>
+                <Navbar.Brand id="homeNavTitle" className="homeNavItem"> $Financial Service Collection </Navbar.Brand>
+                <Navbar.Toggle aria-controls="basic-navbar-nav" />
+                <Navbar.Collapse id="basic-navbar-nav">
+                    <Nav className="mr-auto">
+                    </Nav>
+                    <Nav>
+                        <Nav.Link onClick={this.onLoginButtonClick} ref={this.wrapper} style={{fontSize:"large"}} id="navSignin" className="homeNavItem">Sign In</Nav.Link>
+                    </Nav>
+                </Navbar.Collapse>
+            </Navbar>
+        );
+    };
 
     render() { 
         const {errormessage,isAdmin,userinfo, isDisplaying,loginClicked,services} = this.state;
         const buttonstyle = {
-            backgroundColor: "purple",
             padding : 10,
-            marginTop: 10,
+            marginTop: "6%",
+            width:"25%",
+            
         }
         const disp = isDisplaying ? "block" : "none";
         const homedisplay = {
@@ -131,6 +155,7 @@ class Home extends Component {
         }
 
         let displayed;
+        let mainDisplayed ='';
         
             if (errormessage !== ''){
                 
@@ -139,15 +164,15 @@ class Home extends Component {
             }else{
                 if (!isAdmin) {
                     if(userinfo.length !== 0 && loginClicked){
-                        displayed = <Main userinfo={userinfo} appServices={services}/>
+                        mainDisplayed = <Main userinfo={userinfo} appServices={services}/>
                     }else if(userinfo.length === 0 && loginClicked){
-                        displayed = <div className="error">Entering platform, please wait ... </div>
+                        displayed = <div className="noError">Entering platform ... </div>
                     }
                 }else{
                     if(userinfo.length !== 0 && loginClicked){
-                        displayed = <Admin userinfo={userinfo}/>
+                        mainDisplayed = <Admin userinfo={userinfo}/>
                     }else if(userinfo.length === 0 && loginClicked){
-                        displayed = <div className="error">Entering platform, please wait ... </div>
+                        displayed = <div className="noError">Entering platform ... </div>
                     }
                 } 
                     
@@ -156,14 +181,19 @@ class Home extends Component {
         return (  
             <div>
                 <div id="homeDisplaydiv" style={homedisplay}>
+                {this.navbar()}
                     <div id="homeTitleDisplay">
-                        <img src={applogo} id="applogo" alt="financial service collection"/>
+                        <h3 id="hometitle">$<br></br>Financial Service <br></br>Collection</h3>
+                    </div>
+                    <div id="subtitleHome">
+                        <h5>Platform providing 2011 stock data services for individuals.</h5>
                     </div>
                     <div id="authbutton">
-                    <AppButton name="Register / Login" onClickFunction={this.onLoginButtonClick} style={buttonstyle}/>
+                    <AppButton name="Register / Sign In" onClickFunction={this.onLoginButtonClick} style={buttonstyle} id="homeRegister"/>
                     </div>
+                    {displayed}
                 </div>
-                {displayed}
+                {mainDisplayed}
             </div>
         );
     }
